@@ -1,9 +1,19 @@
 import Text.Regex.Posix
+import Test.HUnit
 
 main = do
+  runTestTT tests
   text <- readFile "input.txt"
   putStrLn . partOne $ text
   putStrLn . partTwo $ text
+
+tests = TestList [wrappingPaperOne, wrappingPaperTwo, ribbonOne, ribbonTwo]
+
+wrappingPaperOne = TestCase (assertEqual "wrapping paper 1" 58 (wrappingPaperNeeded (2, 3, 4)))
+wrappingPaperTwo = TestCase (assertEqual "wrapping paper 2" 43 (wrappingPaperNeeded (1, 1, 10)))
+
+ribbonOne = TestCase (assertEqual "ribbon 1" 34 (ribbonNeeded (2, 3, 4)))
+ribbonTwo = TestCase (assertEqual "ribbon 2" 14 (ribbonNeeded (1, 1, 10)))
   
 partOne :: String -> String
 partOne t = "Part one: " ++ show total
