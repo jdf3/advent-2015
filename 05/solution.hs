@@ -5,7 +5,7 @@ main = do
   text <- readFile "input.txt"
   runTestTT tests
   putStrLn . partOne $ text
-  --putStrLn . partTwo $ text
+  putStrLn . partTwo $ text
 
 tests = TestList [partOneTests, partTwoTests]
 
@@ -17,7 +17,10 @@ partOneTests = TestList [
   TestCase (assertEqual "nice5" False (isNice "dvszwmarrgswjxmb"))]
 
 partTwoTests = TestList [
-  ]
+  TestCase (assertEqual "nice2 1" True (isNice2 "qjhvhtzxzqqjkmpb")),
+  TestCase (assertEqual "nice2 1" True (isNice2 "xxyxx")),
+  TestCase (assertEqual "nice2 1" False (isNice2 "uurcxstgmygtbstg")),
+  TestCase (assertEqual "nice2 1" False (isNice2 "ieodomkazucvgmuy"))]
 
 partOne :: String -> String
 partOne t = "Part one: " ++ (show . countNiceLines $ t)
@@ -47,3 +50,29 @@ containsDoubleLetter (x:xs)
   | null xs = False
   | x == head xs = True
   | otherwise = containsDoubleLetter xs
+
+partTwo :: String -> String
+partTwo t = "Part two: " ++ (show . countNiceLines2 $ t)
+
+countNiceLines2 :: String -> Int
+countNiceLines2 t = length . filter isNice2 $ lines t
+
+isNice2 :: String -> Bool
+isNice2 s = (hasDoubleWithoutOverlapping s) &&
+            (hasDistanceOneDouble s)
+
+-- going to be disciplined and not use regex
+hasDoubleWithoutOverlapping :: String -> Bool
+hasDoubleWithoutOverlapping [] = False
+hasDoubleWithoutOverlapping (x:xs)
+  | null xs = False
+  | (x : [head xs]) `isInfixOf` (tail xs) = True
+  | otherwise = hasDoubleWithoutOverlapping xs
+
+hasDistanceOneDouble :: String -> Bool
+hasDistanceOneDouble [] = False
+hasDistanceOneDouble (x:xs)  
+  | null xs = False
+  | null $ tail $ xs = False
+  | x == (head $ tail $ xs) = True
+  | otherwise = hasDistanceOneDouble xs
