@@ -41,5 +41,6 @@ cont3asc (a : b : c : xs)
   | otherwise = cont3asc (b : c : xs)
 cont3asc _ = False
 
+-- Note: this counts any sequence of the same character as ONE pair.
 cont2pair :: String -> Bool
 cont2pair s = (length . filter (\x -> (length x) > 1) $ group s) > 1
