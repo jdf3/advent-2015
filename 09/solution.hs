@@ -6,16 +6,27 @@ main = do
   runTestTT partOneTests
   text <- readFile "input.txt"
   putStrLn $ "Part one: " ++ (show $ partOne text)
+  runTestTT partTwoTests
+  putStrLn $ "Part two: " ++ (show $ partTwo text)
 
 partOneTests = TestList [
   TestCase (assertEqual "1.1" 605 (partOne "London to Dublin = 464\nLondon to Belfast = 518\nDublin to Belfast = 141"))]
 
+partTwoTests = TestList [
+  TestCase (assertEqual "1.2" 982 (partTwo "London to Dublin = 464\nLondon to Belfast = 518\nDublin to Belfast = 141"))]
+
 partOne :: String -> Int
-partOne s = let l = readData s in
-            let m = readMap l in
-            let locs = readLocs l in
-            let options = permutations locs in
-            minimum $ map (pathCost m) options
+partOne s = minimum . distances $ s
+
+partTwo :: String -> Int
+partTwo s = maximum . distances $ s
+
+distances :: String -> [Int]
+distances s = let l = readData s in
+              let m = readMap l in
+              let locs = readLocs l in
+              let options = permutations locs in
+              map (pathCost m) options
 
 pathCost :: (M.Map (String, String) Int) -> [String] -> Int
 pathCost m (loc1 : loc2 : xs) = (m M.! (loc1, loc2)) + (pathCost m (loc2 : xs))
