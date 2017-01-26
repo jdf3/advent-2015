@@ -8,16 +8,17 @@ input = "hxbxwxba"
 main = do
   runTestTT partOneTests
   putStrLn $ "Part one: " ++ (show . nextvalidpw $ input)
+  putStrLn $ "Part two: " ++ (show ((iterate nextvalidpw input) !! 2))
 
 partOneTests = TestList [
   False ~=? (pwvalid "hijklmmn"),
   False ~=? (pwvalid "abbceffg"),
   False ~=? (pwvalid "abbcegjk"),
   "abcdffaa" ~=? (nextvalidpw "abcdefgh"),
-  "ghjaabcc" ~=? (nextvalidpw "ghjaabcc")]
+  "ghjaabcc" ~=? (nextvalidpw "ghijklmn")]
 
 nextvalidpw :: String -> String
-nextvalidpw p = head . filter pwvalid $ iterate nextpw p
+nextvalidpw p = head . filter pwvalid $ tail (iterate nextpw p)
 
 nextpw :: String -> String
 nextpw s = reverse . nextpwrev . reverse $ s
