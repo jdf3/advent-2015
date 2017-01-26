@@ -9,10 +9,10 @@ import Text.Read
 
 main = do
   runTestTT partOneTests
+  putStrLn ""
   text <- readFile "input.txt"
-  print $ partOne text
-  --runTestTT partTwoTests
-  --print $ partTwo text
+  putStrLn $ "Part one: " ++ (partOne text)
+  putStrLn $ "Part two: " ++ (partTwo text)
 
 partOneTests = TestList [
   TestCase (assertEqual "partOne" "65079" (partOne "123 -> x\n456 -> y\nx AND y -> d\nx OR y -> e\nx LSHIFT 2 -> f\ny RSHIFT 2 -> g\nNOT x -> h\nNOT y -> a"))]
@@ -21,6 +21,10 @@ partTwoTests = TestList []
 
 partOne :: String -> String
 partOne s = show $ snd $ getValue s "a" 
+
+partTwo :: String -> String
+partTwo s = let a = partOne s in
+            show $ snd $ getValue (s ++ a ++ " -> b") "a"
 
 getValue s reg = getValue' (Map.fromList $ parseInstructions s) reg
 
@@ -60,7 +64,7 @@ parseLine ["NOT", argument, "->", last] =
 parseLine [argument, "->", last]
   | (readMaybe argument :: Maybe Word16) /= Nothing = (last, VALUE (read argument :: Word16))
   | otherwise = (last, UNARY id argument)
-parseLine _ = error "Bad instruction"
+parseLine bad = error $ "Bad instruction: " ++ (show bad)
 
 blshift :: Word16 -> Word16 -> Word16
 blshift value s = value `shift` (fromIntegral s)
