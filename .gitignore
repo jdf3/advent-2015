@@ -1,3 +1,12 @@
+solution
 *.o
 *.hi
 *.swp
+dist
+*.hi
+x86_64*
+*.o
+add-source-timestamps
+packages
+cabal*
+.cabal-sandbox
