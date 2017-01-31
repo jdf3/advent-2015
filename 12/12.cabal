@@ -1,0 +1,15 @@
+name: twelve
+author: Jeremy Fehr
+version: 0.0
+build-type: Simple
+cabal-version: >= 1.2
+
+executable solution
+  main-is: solution.hs
+  build-depends: base,
+                 aeson >= 1.1,
+                 HUnit,
+                 bytestring >= 0.10,
+                 vector >= 0.12,
+                 unordered-containers >= 0.2,
+                 scientific
