@@ -1,8 +1,10 @@
 import Data.List
+import qualified Data.Map as M
 
 main = do
   text <- readFile "input.txt"
   putStrLn $ "Part one: " ++ (show $ whichsue text)
+  putStrLn $ "Part two: " ++ (show $ whichsue' text)
 
 correctsue :: [(String, Int)]
 correctsue = [
@@ -44,3 +46,22 @@ parsesues s = map parsesue $ map words $ lines s
 
 strippunc :: String -> String
 strippunc = filter (\x -> not $ x `elem` ",:")
+
+whichsue' :: String -> Int
+whichsue' t = number $ head $ filter (suematch' correctsue) $ parsesues t
+
+suematch' :: [(String, Int)] -> Sue -> Bool
+suematch' m s = suematch'' (M.fromList m) (properties s)
+  where
+    suematch'' :: (M.Map String Int) -> [(String, Int)] -> Bool
+    suematch'' m ((name, count) : rest)
+      | name == "cats" || name == "trees" =
+        if count <= (m M.! name) then False
+        else suematch'' m rest
+      | name == "pomeranians" || name == "goldfish" =
+        if count >= (m M.! name) then False
+        else suematch'' m rest
+      | otherwise =
+        if count /= (m M.! name) then False
+        else suematch'' m rest
+    suematch'' _ _ = True
