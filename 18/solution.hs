@@ -5,9 +5,11 @@ import Data.List
 main = do
   runTestTT partOneTests
   text <- readFile "input.txt"
-  putStrLn $ "Part one: " ++ (show $ countLights text 100)
+  putStrLn $ "Part one: " ++ (show $ countLights partOneIter text 100)
+  runTestTT partTwoTests
+  putStrLn $ "Part two: " ++ (show $ countLights partTwoIter text 100)
 
-testBoard = ".#.#.#\n\
+pOneTestBoard = ".#.#.#\n\
             \...##.\n\
             \#....#\n\
             \..#...\n\
@@ -15,18 +17,48 @@ testBoard = ".#.#.#\n\
             \####.."
 
 partOneTests = TestList [
-  11 ~=? (countLights testBoard 1),
-  8 ~=? (countLights testBoard 2),
-  4 ~=? (countLights testBoard 3),
-  4 ~=? (countLights testBoard 4)]
+  11 ~=? (countLights partOneIter pOneTestBoard 1),
+  8 ~=? (countLights partOneIter pOneTestBoard 2),
+  4 ~=? (countLights partOneIter pOneTestBoard 3),
+  4 ~=? (countLights partOneIter pOneTestBoard 4)]
+
+pTwoTestBoard = "##.#.#\
+                \...##.\n\
+                \#....#\n\
+                \..#...\n\
+                \#.#..#\n\
+                \####.#"
+
+partTwoTests = TestList [
+  17 ~=? (countLights partTwoIter pTwoTestBoard 5)]
 
 data Light = On | Off deriving Eq
 
-countLights :: String -> Int -> Int
-countLights s i =
+countLights :: (M.Map (Int, Int) Light -> M.Map (Int, Int) Light) -> String -> Int -> Int
+countLights iter s i =
   let lights = parseLights s
-      finish = (iterate iterLights lights) !! i
+      finish = (iterate iter lights) !! i
   in length $ filter (== On) $ M.elems finish
+
+partOneIter :: M.Map (Int, Int) Light -> M.Map (Int, Int) Light
+partOneIter = iterLights
+
+partTwoIter :: M.Map (Int, Int) Light -> M.Map (Int, Int) Light
+partTwoIter m = fixCorners $ iterLights m
+
+fixCorners :: M.Map (Int, Int) Light -> M.Map (Int, Int) Light
+fixCorners m =
+  let keys = M.keys m
+      minx = minimum $ map fst keys
+      miny = minimum $ map snd keys
+      maxx = maximum $ map fst keys
+      maxy = maximum $ map snd keys
+      corners = M.fromList [
+        ((minx, miny), On),
+        ((minx, maxy), On),
+        ((maxx, miny), On),
+        ((maxx, maxy), On)]
+  in corners `M.union` m
 
 iterLights :: M.Map (Int, Int) Light -> M.Map (Int, Int) Light
 iterLights m = M.fromList $ map (\coord -> (coord, iterLight m coord)) $ M.keys m
