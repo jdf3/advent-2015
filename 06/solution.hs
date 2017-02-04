@@ -1,7 +1,7 @@
 -- There's a thunk-leak somewhere that I can't be bothered to debug right now.
 -- So, compile with -rtsopts; run with +RTS -K1e8
 -- If I was doing this again, I wouldn't want this mutable array to run in the
--- IO monad, opting instead for runSTArray.
+-- IO monad, opting instead for the State monad.
 
 {-# LANGUAGE FlexibleContexts #-}
 
